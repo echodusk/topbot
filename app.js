@@ -46,7 +46,9 @@ client.on('message', message => {
     .split(/ +/);
 
   const commandName = args.shift().toLowerCase();
-  if (!client.commands.has(commandName)) return;
+  if (!client.commands.has(commandName)) {
+    return message.reply("that command doesn't exist.");
+  }
 
   const command = client.commands.get(commandName);
 
@@ -63,7 +65,7 @@ client.on('message', message => {
     if (now < expirationTime) {
       const timeLeft = (expirationTime - now) / 1000;
       return message.reply(
-        `You must wait ${timeLeft.toFixed(1)} second(s) before using the \`${
+        `you must wait ${timeLeft.toFixed(1)} second(s) before using the \`${
           command.name
         }\` again.`
       );
@@ -82,6 +84,6 @@ client.on('message', message => {
     }
   } catch (err) {
     console.error(err);
-    message.reply('Something wrong with said command.');
+    message.reply('something wrong with said command.');
   }
 });
