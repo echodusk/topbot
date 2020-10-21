@@ -2,6 +2,14 @@ import { Client, Collection } from 'discord.js';
 import config from './config.json';
 import { readdirSync } from 'fs';
 
+interface Command {
+  name: string;
+  descriptiopn: string;
+  cooldown?: number;
+  includePing?: boolean;
+  execute: (msg, args) => void;
+}
+
 //  client init
 const client = new Client();
 client
@@ -9,7 +17,7 @@ client
   .then(_ => console.log('connected to discord server'))
   .catch(err => console.error(err));
 
-const commands = new Collection<string, any>();
+const commands = new Collection<string, Command>();
 const prefix = config.PREFIX;
 
 const cooldowns = new Collection<string, any>();
@@ -47,7 +55,6 @@ client.on('message', message => {
     .trim()
     .split(/ +/);
 
-  console.log(commands);
   const commandName = args.shift()!.toLowerCase();
 
   if (!commands.has(commandName)) {
@@ -55,16 +62,19 @@ client.on('message', message => {
   }
 
   const command = commands.get(commandName);
+  if (!command) return;
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Collection());
   }
+
   const now = Date.now();
-  const timestamps = cooldowns.get(command.name);
+  const timestamps: Collection<string, number> = cooldowns.get(command.name);
+
   const cooldownAmount = (command.cooldown || 3) * 1000;
 
   if (timestamps.has(message.author.id)) {
-    const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+    const expirationTime = timestamps.get(message.author.id)! + cooldownAmount;
 
     if (now < expirationTime) {
       const timeLeft = (expirationTime - now) / 1000;
