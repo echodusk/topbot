@@ -1,56 +1,60 @@
-const { Client, Collection } = require('discord.js');
-const config = require('./config.json');
-const { readdirSync } = require('fs');
-
-const ytdl = require('ytdl-core');
+import { Client, Collection } from 'discord.js';
+import config from './config.json';
+import { readdirSync } from 'fs';
 
 //  client init
 const client = new Client();
-client.login(config.DISCORD_TOKEN);
-client.commands = new Collection();
-client.prefix = config.PREFIX;
+client
+  .login(config.DISCORD_TOKEN)
+  .then(_ => console.log('connected to discord server'))
+  .catch(err => console.error(err));
 
-const cooldowns = new Collection();
+const commands = new Collection<string, any>();
+const prefix = config.PREFIX;
+
+const cooldowns = new Collection<string, any>();
 
 // Connection
 
 client.on('ready', () => {
-  console.log(`Bot connected: ${client.user.tag}`);
+  console.log(`Bot connected: ${client.user!.tag}`);
 });
 client.on('disconnect', () =>
-  console.log(`Bot disconnected: ${client.user.tag}`)
+  console.log(`Bot disconnected: ${client.user!.tag}`)
 );
 client.on('reconnecting', () => {
-  console.log(`Bot reconnecting: ${client.user.tag}`);
+  console.log(`Bot reconnecting: ${client.user!.tag}`);
 });
 client.on('warn', console.info);
 client.on('error', console.error);
 
 // Command Handler
 
-const commandFiles = readdirSync('./commands').filter(file =>
-  file.endsWith('.js')
+const commandFiles = readdirSync('./src/commands').filter(file =>
+  file.endsWith('.ts')
 );
 
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-  client.commands.set(command.name, command);
+  commands.set(command.name, command);
 }
 
 // Message Handler
 client.on('message', message => {
-  if (!message.content.startsWith(client.prefix) || message.author.bot) return;
+  if (!message.content.startsWith(prefix) || message.author.bot) return;
   const args = message.content
-    .slice(client.prefix.length)
+    .slice(prefix.length)
     .trim()
     .split(/ +/);
 
-  const commandName = args.shift().toLowerCase();
-  if (!client.commands.has(commandName)) {
+  console.log(commands);
+  const commandName = args.shift()!.toLowerCase();
+
+  if (!commands.has(commandName)) {
     return message.reply("that command doesn't exist.");
   }
 
-  const command = client.commands.get(commandName);
+  const command = commands.get(commandName);
 
   if (!cooldowns.has(command.name)) {
     cooldowns.set(command.name, new Collection());

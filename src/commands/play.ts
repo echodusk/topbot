@@ -37,8 +37,8 @@ module.exports = {
       return message.channel.send('I need the permissions to join and speak.');
     }
 
-    let songInfo = null;
-    let song = null;
+    let songInfo;
+    let song;
 
     try {
       songInfo = await ytdl.getInfo(args[0]);
@@ -57,7 +57,7 @@ module.exports = {
     }
 
     if (!serverQueue) {
-      const queueContruct = {
+      const queueContruct: any = {
         textChannel: message.channel,
         voiceChannel: voiceChannel,
         connection: null,
