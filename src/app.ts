@@ -1,4 +1,4 @@
-import { Client, Collection } from 'discord.js';
+import { Client, Collection, Message } from 'discord.js';
 import config from './config.json';
 import { readdirSync } from 'fs';
 
