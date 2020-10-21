@@ -1,4 +1,6 @@
-module.exports = {
+import { Command } from '../app';
+
+const daniel: Command = {
   name: 'daniel',
   description: 'Ah daniel.',
   execute(message, args) {
@@ -37,3 +39,5 @@ module.exports = {
     message.channel.send(mierDaniel[randomNumber()]);
   }
 };
+
+module.exports = daniel;

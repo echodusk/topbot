@@ -1,4 +1,6 @@
-module.exports = {
+import { Command } from '../app';
+
+const ping: Command = {
   name: 'ping',
   description: 'Pings discord server.',
   includePing: true,
@@ -7,3 +9,5 @@ module.exports = {
     message.channel.send('Pong. ' + args.ping + 'ms');
   }
 };
+
+module.exports = ping;

@@ -2,9 +2,9 @@ import { Client, Collection } from 'discord.js';
 import config from './config.json';
 import { readdirSync } from 'fs';
 
-interface Command {
+export interface Command {
   name: string;
-  descriptiopn: string;
+  description: string;
   cooldown?: number;
   includePing?: boolean;
   execute: (msg, args) => void;
@@ -43,7 +43,7 @@ const commandFiles = readdirSync('./src/commands').filter(file =>
 );
 
 for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
+  const command: Command = require(`./commands/${file}`);
   commands.set(command.name, command);
 }
 

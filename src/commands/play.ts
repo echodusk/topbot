@@ -1,6 +1,8 @@
+import { Command } from '../app';
+
 const ytdl = require('ytdl-core');
 
-module.exports = {
+const play: Command = {
   name: 'play',
   description: 'Play music from youtube URLs only.',
   async execute(message, args) {
@@ -85,3 +87,5 @@ module.exports = {
     }
   }
 };
+
+module.exports = play;
